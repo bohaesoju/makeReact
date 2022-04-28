@@ -1,3 +1,5 @@
+import { observable, ovserve } from './core/observer.js';
+
 const state = observable({
   a: 10,
   b: 20,
@@ -12,5 +14,13 @@ const render = () => {
     <input id="stateB" value="${state.b}" />
   `;
 
-  $app.querySelector('#stateA').addEventListener('c')
+  $app.querySelector('#stateA').addEventListener('change', ({ target }) => {
+    state.a = Number(target.value);
+  })
+
+  $app.querySelector('#stateB').addEventListener('change', ({ target }) => {
+    state.b = Number(target.value);
+  })
 }
+
+observe(render);
