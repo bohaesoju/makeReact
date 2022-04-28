@@ -1,26 +1,3 @@
-import { observable, ovserve } from './core/observer.js';
+import AppComponent3 from "./AppComponent3.js";
 
-const state = observable({
-  a: 10,
-  b: 20,
-});
-
-const $app = document.querySelector('#root');
-
-const render = () => {
-  $app.innerHTML = `
-    <p>a + b = ${state.a + state.b}</p>
-    <input id="stateA" value="${state.a}" />
-    <input id="stateB" value="${state.b}" />
-  `;
-
-  $app.querySelector('#stateA').addEventListener('change', ({ target }) => {
-    state.a = Number(target.value);
-  })
-
-  $app.querySelector('#stateB').addEventListener('change', ({ target }) => {
-    state.b = Number(target.value);
-  })
-}
-
-observe(render);
+new AppComponent3(document.querySelector('#root'));
