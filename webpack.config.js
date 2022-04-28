@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   mode: 'development',
   // 1. entry 입력을 받고, 
-  entry: './src/app.js',
+  entry: './src/redux.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'

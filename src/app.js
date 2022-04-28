@@ -1,43 +1,41 @@
 /* @jsx createElement */
 
-import { createElement, renderRealDOM, updateElement } from './react';
+import { createElement, updateElement, renderRealDOM, initRendering } from './react';
 
-const oldState = [
-  { id: 1, completed: false, content: 'todo list item 1' },
-  { id: 2, completed: true, content: 'todo list item 2' },
+const previousState = [
+  { title: '첫번째 제목 입니다' },
+  { title: '두번째 제목 입니다' },
+  { title: '세번째 제목 입니다' },
 ];
 
-const newState = [
-  { id: 1, completed: true, content: 'todo list item 1' },
-  { id: 2, completed: true, content: 'todo list item 2' },
-  { id: 3, completed: false, content: 'todo list item 3' },
+const nextState = [
+  { title: '첫번째 제목 입니다' },
+  { title: '두번째 제목 입니다 update' },
+  { title: '세번째 제목 입니다' },
 ];
 
 const render = (state) => (
-  <ul id="container">
-    { state.map(({ completed, content }) => (
-        <li class={completed ? 'completed' : null}>
-          <input type="checkbox" class="toggle" checked={completed} />
-          { content }
-          <button class="remove">삭제</button>
-        </li>
-      )) }
-  </ul>
+  <ul>
+    { state.map(({ title }) => (
+      <li>{ title }</li>
+    )) }
+    </ul>
 )
 
-const oldNode = render(oldState);
-const newNode = render(newState);
+const previousNode = render(previousState);
+const nextNode = render(nextState);
 
 const $root = document.createElement('div');
 
 document.body.appendChild($root);
 
-updateElement($root, oldNode);
+$root.appendChild(renderRealDOM(previousNode));
+// updateElement($root, oldNode);
 
 setTimeout(() => 
-  updateElement($root, newNode, oldNode),
-  3000
-); // 1초 뒤에 DOM 변경
+  diffingUpdate($root, nextNode, previousNode),
+  2000
+); 
 
 // document
 //   .querySelector('#root')

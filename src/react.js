@@ -20,58 +20,33 @@ export function renderRealDOM(virtualDOM){
   return $Element;
 }
 
-export function updateElement (parent, newNode, oldNode, index = 0) {
-  if (!newNode && oldNode) {
-    return parent.removeChild(parent.childNodes[index]);
-  }
-
-  if (newNode && !oldNode) {
-    return parent.appendChild(renderRealDOM(newNode));
-  }
-
+export function diffingUpdate (parent, newNode, oldNode, parentIndex = 0) {
+  // oldNode의 내용과 newNode의 내용이 다르다면, oldNode의 내용을 newNode의 내용으로 교체한다.
+	// updateElement 는 재귀로 호출된다. object 가 아닌 문자열로 넘어올때 문자열을 교체해준다
   if (typeof newNode === "string" && typeof oldNode === "string") {
+    // 해당 문자열이 동일하다면, replace 해줄 이유가 없다.
     if (newNode === oldNode) return;
+    // replaceChild 는 newChild, oldChild 를 인자로 받는다.
     return parent.replaceChild(
       renderRealDOM(newNode),
-      parent.childNodes[index]
+      parent.childNodes[parentIndex]
     )
   }
 
-  if (newNode.type !== oldNode.type) {
-    return parent.replaceChild(
-      renderRealDOM(newNode),
-      parent.childNodes[index]
-    )
-  }
-
-  updateAttributes(
-    parent.childNodes[index],
-    newNode.props || {},
-    oldNode.props || {}
-  );
-
-  const maxLength = Math.max(
-    newNode.children.length,
-    oldNode.children.length,
-  );
-  for (let i = 0; i < maxLength; i++) {
+  // newNode와 oldNode의 모든 자식 태그를 순회하며 updateElement 를 반복해준다.
+  for (const [index] of newNode.children.entries()) {
     updateElement(
-      parent.childNodes[index],
-      newNode.children[i],
-      oldNode.children[i],
-      i
+      parent.childNodes[parentIndex],
+      newNode.children[index],
+      oldNode.children[index],
+      index
     )
   }
 }
 
-function updateAttributes(target, newProps, oldProps) {
-  for (const [attr, value] of Object.entries(newProps)) {
-    if (oldProps[attr] === newProps[attr]) continue;
-    target.setAttribute(attr, value);
-  }
-
-  for (const attr of Object.keys(oldProps)) {
-    if (newProps[attr] !== undefined) continue;
-    target.removeAttribute(attr)
-  }
-}
+// export function updateElement (parent, nextNode, previousNode) {
+//   return parent.replaceChild(
+//     renderRealDOM(nextNode),
+//     parent.childNodes[0]
+//   )
+// }
